@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'input.dart';
+import 'result.dart';
 
 void main() => runApp(Suhu());
 
@@ -13,6 +15,14 @@ class MainSuhu extends State<Suhu> {
   double inputSuhu = 0;
   double reamur = 0;
   double kelvin = 0;
+  double fahrenheit = 0;
+
+  void rumusSuhu() => setState(() {
+        inputSuhu = double.parse(SuhuController.text);
+        kelvin = inputSuhu + 273;
+        reamur = (4 / 5) * inputSuhu;
+        fahrenheit = (inputSuhu * 9 / 5) + 32;
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -30,62 +40,20 @@ class MainSuhu extends State<Suhu> {
           margin: EdgeInsets.all(8),
           child: Column(
             children: [
-              TextFormField(
-                controller: SuhuController,
-                keyboardType: TextInputType.number,
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.digitsOnly
-                ],
-                decoration: InputDecoration(
-                  hintText: 'Masukkan Suhu Dalam Celcius',
+              Input(SuhuController: SuhuController),
+              Result(kelvin: kelvin, reamur: reamur),
+              Container(
+                width: double.infinity,
+                child: RaisedButton(
+                  child: Text(
+                    "Konversi Suhu",
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                  onPressed: () {
+                    rumusSuhu();
+                  },
+                  color: Colors.blue,
                 ),
-              ),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text('Suhu dalam Kelvin',
-                              style: TextStyle(color: Colors.black)),
-                          Text('$kelvin',
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 20)),
-                        ],
-                      ),
-                      margin: EdgeInsets.all(8),
-                    ),
-                    Container(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text('Suhu dalam Reamur',
-                              style: TextStyle(color: Colors.black)),
-                          Text('$reamur',
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 20)),
-                        ],
-                      ),
-                      margin: EdgeInsets.all(8),
-                    ),
-                  ],
-                ),
-              ),
-              RaisedButton(
-                child: Text(
-                  "Konversi Suhu",
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-                color: Colors.blue,
-                onPressed: () {
-                  setState(() {
-                    inputSuhu = double.parse(SuhuController.text);
-                    kelvin = inputSuhu + 273;
-                    reamur = (4 / 5) * inputSuhu;
-                  });
-                },
               ),
             ],
           ),
@@ -94,10 +62,3 @@ class MainSuhu extends State<Suhu> {
     );
   }
 }
-
-/*String validatorAngka(String value) {
-  if (value.length != 4)
-    return 'Input harus Angka';
-  else
-    return null;
-}*/
