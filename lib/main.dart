@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'convert.dart';
 import 'input.dart';
 import 'result.dart';
 
@@ -12,16 +13,19 @@ class Suhu extends StatefulWidget {
 
 class MainSuhu extends State<Suhu> {
   final SuhuController = TextEditingController();
-  double inputSuhu = 0;
-  double reamur = 0;
-  double kelvin = 0;
-  double fahrenheit = 0;
+  double _inputSuhu = 0;
+  double _reamur = 0;
+  double _kelvin = 0;
+  double _fahrenheit = 0;
+
+  List<String> ListString = ["Kelvin", "Reamur", "Fahrenheit"];
+  String valueDropDown = "Kelvin";
 
   void rumusSuhu() => setState(() {
-        inputSuhu = double.parse(SuhuController.text);
-        kelvin = inputSuhu + 273;
-        reamur = (4 / 5) * inputSuhu;
-        fahrenheit = (inputSuhu * 9 / 5) + 32;
+        _inputSuhu = double.parse(SuhuController.text);
+        _kelvin = _inputSuhu + 273;
+        _reamur = (4 / 5) * _inputSuhu;
+        _fahrenheit = (_inputSuhu * 9 / 5) + 32;
       });
 
   @override
@@ -41,20 +45,22 @@ class MainSuhu extends State<Suhu> {
           child: Column(
             children: [
               Input(SuhuController: SuhuController),
-              Result(kelvin: kelvin, reamur: reamur),
-              Container(
-                width: double.infinity,
-                child: RaisedButton(
-                  child: Text(
-                    "Konversi Suhu",
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                  ),
-                  onPressed: () {
-                    rumusSuhu();
-                  },
-                  color: Colors.blue,
-                ),
+              DropdownButton<String>(
+                items: ListString.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                value: valueDropDown,
+                onChanged: (String changeValue) {
+                  setState(() {
+                    valueDropDown = changeValue;
+                  });
+                },
               ),
+              Result(kelvin: _kelvin, reamur: _reamur),
+              Convert(convertHandler: rumusSuhu),
             ],
           ),
         ),
